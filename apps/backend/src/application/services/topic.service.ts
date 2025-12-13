@@ -77,7 +77,17 @@ export class TopicService {
     }
 
     async deleteTopic(topicId: number, userId: number) : Promise<void> {
-        throw new Error("Not implemented")
+        const topics: Topic[] = await this.topicRepository.findAll();
+        const topic = topics.find(t=> t.id === topicId);
+
+        if (!topic) {
+            throw new Error("Topic not found")
+        }
+
+        if(topic.created_by !== userId) {
+            throw new Error("Not premited")
+        }
+        await this.topicRepository.deleteById(topicId)
     }
 
 }
