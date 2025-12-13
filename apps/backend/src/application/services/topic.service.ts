@@ -3,6 +3,7 @@ import { CreateTopicDTO } from "../../shared/dtos/create-topic.dto";
 import { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto";
 import { TopicResponseDTO } from "../../shared/dtos/topic-response.dto";
 import { Topic } from "../../domain/models/topic";
+import { Vote } from "../../domain/models/vote";
 
 
 export class TopicService {
@@ -25,7 +26,6 @@ export class TopicService {
         const newTopic = await this.topicRepository.create(topic)
 
         //return TopicResponseDTO
-
         return {
             id: newTopic.id,
             topic: newTopic.topic,
@@ -37,7 +37,33 @@ export class TopicService {
     }
 
     async getAllTopics(): Promise<TopicResponseDTO[]> {
-        throw new Error("Not implemented")
+
+        // get all topics
+        const topics: Topic[] = await this.topicRepository.findAll();
+        //for each topics get its vote
+        const res: TopicResponseDTO[] = []
+        for(let i = 0 ; i < topics.length; i++) {
+            let votes: Vote[] = await this.topicRepository.findVotesByTopicId(topics[i].id);
+            let up: number  = 0;
+            let down: number = 0
+            for(let j = 0 ; j < votes.length; j++) {
+                if(votes[j].value == "up")
+                    up++
+                else
+                    down++
+            }
+            let dto2: TopicResponseDTO = {
+                id:topics[i].id,
+                topic:topics[i].topic,
+                upCount: up,
+                downCount: down,
+                createdBy: topics[i].created_by,
+                createdAt: topics[i].createdAt,
+            }
+            res.push(dto2)
+        }
+
+        return res
     }
     
     async vote(dto: VoteTopicDTO, userId: number): Promise<void> {
