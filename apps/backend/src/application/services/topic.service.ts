@@ -4,7 +4,7 @@ import { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto";
 import { TopicResponseDTO } from "../../shared/dtos/topic-response.dto";
 import { Topic } from "../../domain/models/topic";
 import { Vote } from "../../domain/models/vote";
-
+import { User } from "../../domain/models/user";
 
 export class TopicService {
     constructor(private topicRepository: TopicRepository) {
@@ -67,7 +67,13 @@ export class TopicService {
     }
     
     async vote(dto: VoteTopicDTO, userId: number): Promise<void> {
-        throw new Error("Not implemented")
+        const vote: Vote = {
+            id:0,
+            topicId:dto.topicId,
+            userId: userId,
+            value: dto.value
+        }
+        await this.topicRepository.saveVote(vote)
     }
 
     async deleteTopic(topicId: number, userId: number) : Promise<void> {
