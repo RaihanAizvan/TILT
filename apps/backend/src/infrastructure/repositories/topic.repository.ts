@@ -1,7 +1,7 @@
 // repository means just how data is stored and fetched
 
-import { Vote } from "../../domain/models/vote";
-import { Topic } from "../../domain/models/topic";
+import type { Vote } from "../../domain/models/vote.js";
+import type { Topic } from "../../domain/models/topic.js";
 
 export interface TopicRepository {
     create(topic: Topic) : Promise<Topic>

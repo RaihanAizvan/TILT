@@ -17,8 +17,8 @@ Catch errors
 
 
 import { Request, Response } from "express";
-import { TopicService } from "../../application/services/topic.service";
-import { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto";
+import { TopicService } from "../../application/services/topic.service.js";
+import type { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto.js";
 
 export class TopicController {
     constructor(private topicService: TopicService) {
