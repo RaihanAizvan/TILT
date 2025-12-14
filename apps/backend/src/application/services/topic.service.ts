@@ -11,12 +11,7 @@ export class TopicService {
 
     }
 
-    async createTopic(dto: CreateTopicDTO, userId: number) : Promise<TopicResponseDTO> {
-
-
-        if(!userId){
-            throw new Error("Unauthorized")
-        }
+    async createTopic(dto: CreateTopicDTO, userId: number, username: string) : Promise<TopicResponseDTO> {
 
         // create a new topic
 
@@ -24,6 +19,7 @@ export class TopicService {
             id:0,
             topic: dto.topic,
             created_by: userId,
+            created_by_name: username,
             createdAt: new Date()
         }
         // store it
@@ -37,6 +33,7 @@ export class TopicService {
             upCount: 0,
             downCount: 0,
             createdBy: newTopic.created_by,
+            createdByName: newTopic.created_by_name,
             createdAt: newTopic.createdAt
         }
     }
@@ -63,6 +60,7 @@ export class TopicService {
                 upCount: up,
                 downCount: down,
                 createdBy: topics[i].created_by,
+                createdByName: topics[i].created_by_name,
                 createdAt: topics[i].createdAt,
             }
             res.push(dto2)
@@ -71,12 +69,7 @@ export class TopicService {
         return res
     }
     
-    async vote(dto: VoteTopicDTO, userId: number| undefined): Promise<void> {
-
-        if(!userId){
-            throw new Error("Unauthorized")
-        }
-
+    async vote(dto: VoteTopicDTO, userId: number): Promise<void> {
         const vote: Vote = {
             id:0,
             topicId:dto.topicId,

@@ -4,5 +4,6 @@ export interface TopicResponseDTO {
     upCount: number;
     downCount: number;
     createdBy: number;
+    createdByName: string;
     createdAt: Date;
 }

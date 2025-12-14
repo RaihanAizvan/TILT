@@ -47,5 +47,6 @@ app.post("/topics", (req, res) => topicController.createTopic(req, res));
 app.get("/topics", (req, res) => topicController.getAllTopics(req, res));
 app.post("/topics/:id/vote", (req, res) => topicController.vote(req, res));
 app.delete("/topics/:id", (req, res) => topicController.deleteTopic(req, res));
+app.post('/session/username', (req, res) => topicController.createUser(req,res))
 
 export default app;
