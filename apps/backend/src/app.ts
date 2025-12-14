@@ -12,10 +12,25 @@ const topicRepository = new InMemoryTopicRepository();
 const topicService = new TopicService(topicRepository);
 const topicController = new TopicController(topicService);
 
+// cors
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*")
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS")
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204)
+  }
+
+  next()
+})
+
+
 // routes
 app.post("/topics", (req, res) => topicController.createTopic(req, res));
 app.get("/topics", (req, res) => topicController.getAllTopics(req, res));
 app.post("/topics/:id/vote", (req, res) => topicController.vote(req, res));
-app.delete("/topic/:id", (req, res) => topicController.deleteTopic(req, res));
+app.delete("/topics/:id", (req, res) => topicController.deleteTopic(req, res));
 
 export default app;
