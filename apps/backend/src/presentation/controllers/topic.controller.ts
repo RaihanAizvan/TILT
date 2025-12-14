@@ -18,6 +18,7 @@ Catch errors
 
 import { Request, Response } from "express";
 import { TopicService } from "../../application/services/topic.service";
+import { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto";
 
 export class TopicController {
     constructor(private topicService: TopicService) {
@@ -49,7 +50,27 @@ export class TopicController {
     }
 
     async vote(req: Request, res: Response) {
+        try {
+            const topicId: number  = Number(req.params.id)
+            
+            //checking for not a number
+            if (Number.isNaN(topicId)) {
+                throw new Error("Topic id must be a number")
+            }
+            const { value }: VoteTopicDTO = req.body
+            const userId = 1 //mock
 
+            const dto: VoteTopicDTO = {
+                topicId : topicId,
+                value: value
+            }
+
+            await this.topicService.vote(dto, userId)
+            res.status(204).send()
+
+        } catch (err: any) {
+            res.status(400).json({message: err.message})
+        }
     }
 
     async deleteTopic(req: Request, res: Response) {
