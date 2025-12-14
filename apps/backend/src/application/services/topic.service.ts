@@ -11,17 +11,17 @@ export class TopicService {
 
     }
 
-    async createTopic(dto: CreateTopicDTO, userId: number, username: string) : Promise<TopicResponseDTO> {
+        async createTopic(dto: CreateTopicDTO, userId: number, username: string) : Promise<TopicResponseDTO> {
 
-        // create a new topic
+            // create a new topic
 
-        const topic: Topic  = {
-            id:0,
-            topic: dto.topic,
-            created_by: userId,
-            created_by_name: username,
-            createdAt: new Date()
-        }
+            const topic: Topic  = {
+                id:'',
+                topic: dto.topic,
+                created_by: userId,
+                created_by_name: username,
+                createdAt: new Date()
+            }
         // store it
 
         const newTopic = await this.topicRepository.create(topic)
@@ -79,7 +79,7 @@ export class TopicService {
         await this.topicRepository.saveVote(vote)
     }
 
-    async deleteTopic(topicId: number, userId: number) : Promise<void> {
+    async deleteTopic(topicId: string, userId: number) : Promise<void> {
         const topics: Topic[] = await this.topicRepository.findAll();
         const topic = topics.find(t=> t.id === topicId);
 

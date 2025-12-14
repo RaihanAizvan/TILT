@@ -56,7 +56,7 @@ export class TopicController {
 
     async vote(req: Request, res: Response) {
         try {
-            const topicId: number  = Number(req.params.id)
+            const topicId: string  = req.params.id
             
             //checking for not a number
             if (Number.isNaN(topicId)) {
@@ -85,7 +85,7 @@ export class TopicController {
     async deleteTopic(req: Request, res: Response) {
         try {
             
-            const topicId: number = Number(req.params.id)
+            const topicId: string = req.params.id
 
             if (Number.isNaN(topicId)) {
                 return res.status(400).json({ message: "Topic id must be a number" })

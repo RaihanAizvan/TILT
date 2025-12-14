@@ -1,5 +1,5 @@
 export interface TopicResponseDTO {
-    id: number;
+    id: string;
     topic: string;
     upCount: number;
     downCount: number;

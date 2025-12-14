@@ -1,5 +1,6 @@
 // in memory repo are just like fake db. for testing architecture
 
+import { randomUUID } from "crypto";
 import type { TopicRepository } from "./topic.repository.js";
 import type { Topic } from "../../domain/models/topic.js";
 import type { Vote } from "../../domain/models/vote.js";
@@ -13,7 +14,7 @@ export class InMemoryTopicRepository implements TopicRepository {
   async create(topic: Topic): Promise<Topic> {
     const newTopic = {
       ...topic,
-      id: this.topicIdCounter++,
+      id: randomUUID(),
     };
     this.topics.push(newTopic);
     return newTopic;
@@ -23,7 +24,7 @@ export class InMemoryTopicRepository implements TopicRepository {
     return this.topics;
   }
 
-  async deleteById(topicId: number): Promise<void> {
+  async deleteById(topicId: string): Promise<void> {
     this.topics = this.topics.filter((t) => t.id !== topicId);
     this.votes = this.votes.filter((v) => v.topicId !== topicId);
   }
@@ -42,7 +43,7 @@ export class InMemoryTopicRepository implements TopicRepository {
     }
   }
 
-  async findVotesByTopicId(topicId: number): Promise<Vote[]> {
+  async findVotesByTopicId(topicId: string): Promise<Vote[]> {
     return this.votes.filter((v) => v.topicId === topicId);
   }
 }
