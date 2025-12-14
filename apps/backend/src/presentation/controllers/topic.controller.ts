@@ -28,13 +28,15 @@ export class TopicController {
     async createTopic(req: Request, res: Response) {
         try {
             const {topic} = req.body;
-            const userId = 1;
-
+            const userId = req.session.userId;
+            if(!userId){
+                return res.status(401).json({message: "Unauthorized"})
+            }
             const result = await this.topicService.createTopic({topic}, userId)
             res.json(result)
 
         } catch (err: any) {
-            res.status(500).json({message:err.message})
+            res.status(500).json({message:err.message}) 
         }
     }
 
@@ -58,7 +60,11 @@ export class TopicController {
                 throw new Error("Topic id must be a number")
             }
             const { value }: VoteTopicDTO = req.body
-            const userId = 1 //mock
+            const userId = req.session.userId;
+
+            if(!userId) {
+                return res.status(401).json({message: "Unauthorized"})
+            }
 
             const dto: VoteTopicDTO = {
                 topicId : topicId,
@@ -82,7 +88,11 @@ export class TopicController {
                 return res.status(400).json({ message: "Topic id must be a number" })
             }
 
-            const userId: number = 1 //mock
+            const userId: number| undefined = req.session.userId;
+            if (!userId) {
+                return res.status(401).json({ message: "Unauthorized" })
+            }
+
             await this.topicService.deleteTopic(topicId, userId)
             res.status(204).send()
 
