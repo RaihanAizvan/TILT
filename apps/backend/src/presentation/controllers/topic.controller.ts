@@ -74,6 +74,20 @@ export class TopicController {
     }
 
     async deleteTopic(req: Request, res: Response) {
+        try {
+            
+            const topicId: number = Number(req.params.id)
 
+            if (Number.isNaN(topicId)) {
+                return res.status(400).json({ message: "Topic id must be a number" })
+            }
+
+            const userId: number = 1 //mock
+            await this.topicService.deleteTopic(topicId, userId)
+            res.status(204).send()
+
+        } catch (err:any) {
+            res.status(500).json({message: err.message})
+        }
     }
 }
