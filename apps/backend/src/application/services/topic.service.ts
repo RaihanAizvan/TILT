@@ -1,10 +1,10 @@
-import { TopicRepository } from "../../infrastructure/repositories/topic.repository";
-import { CreateTopicDTO } from "../../shared/dtos/create-topic.dto";
-import { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto";
-import { TopicResponseDTO } from "../../shared/dtos/topic-response.dto";
-import { Topic } from "../../domain/models/topic";
-import { Vote } from "../../domain/models/vote";
-import { User } from "../../domain/models/user";
+import type { TopicRepository } from "../../infrastructure/repositories/topic.repository.js";
+import type { CreateTopicDTO } from "../../shared/dtos/create-topic.dto.js";
+import type { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto.js";
+import type { TopicResponseDTO } from "../../shared/dtos/topic-response.dto.js";
+import type { Topic } from "../../domain/models/topic.js";
+import type { Vote } from "../../domain/models/vote.js";
+import type { User } from "../../domain/models/user.js";
 
 export class TopicService {
     constructor(private topicRepository: TopicRepository) {
