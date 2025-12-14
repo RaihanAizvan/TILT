@@ -13,6 +13,11 @@ export class TopicService {
 
     async createTopic(dto: CreateTopicDTO, userId: number) : Promise<TopicResponseDTO> {
 
+
+        if(!userId){
+            throw new Error("Unauthorized")
+        }
+
         // create a new topic
 
         const topic: Topic  = {
@@ -66,7 +71,12 @@ export class TopicService {
         return res
     }
     
-    async vote(dto: VoteTopicDTO, userId: number): Promise<void> {
+    async vote(dto: VoteTopicDTO, userId: number| undefined): Promise<void> {
+
+        if(!userId){
+            throw new Error("Unauthorized")
+        }
+
         const vote: Vote = {
             id:0,
             topicId:dto.topicId,
