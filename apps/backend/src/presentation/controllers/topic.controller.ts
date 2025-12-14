@@ -33,12 +33,19 @@ export class TopicController {
             res.json(result)
 
         } catch (err: any) {
-            
+            res.status(500).json({message:err.message})
         }
     }
 
     async getAllTopics(req: Request, res: Response) {
+        try {
+            
+            const topics = await this.topicService.getAllTopics()
+            res.json(topics)
 
+        } catch (err: any) {
+            res.status(500).json({message:err.message})
+        }
     }
 
     async vote(req: Request, res: Response) {
