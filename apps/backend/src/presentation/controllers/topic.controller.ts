@@ -28,11 +28,14 @@ export class TopicController {
     async createTopic(req: Request, res: Response) {
         try {
             const {topic} = req.body;
-            const userId = req.session.userId;
+            const {userId, username} = req.session;
+            if(!username){
+                return res.status(400).json({message: "Set username first. then create post"})
+            }
             if(!userId){
                 return res.status(401).json({message: "Unauthorized"})
             }
-            const result = await this.topicService.createTopic({topic}, userId)
+            const result = await this.topicService.createTopic({topic}, userId, username)
             res.json(result)
 
         } catch (err: any) {
@@ -97,6 +100,20 @@ export class TopicController {
             res.status(204).send()
 
         } catch (err:any) {
+            res.status(500).json({message: err.message})
+        }
+    }
+
+    async createUser(req: Request, res: Response) {
+        try {
+            const username = req.body.username
+            if(!username) {
+                return res.status(400).json({message: "Set username first. create post"})
+            }
+
+            req.session.username = username
+            res.status(204).send()
+        } catch(err:any) {
             res.status(500).json({message: err.message})
         }
     }
