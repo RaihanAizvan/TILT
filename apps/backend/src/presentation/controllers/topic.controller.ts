@@ -25,7 +25,16 @@ export class TopicController {
     }
 
     async createTopic(req: Request, res: Response) {
-        
+        try {
+            const {topic} = req.body;
+            const userId = 1;
+
+            const result = await this.topicService.createTopic({topic}, userId)
+            res.json(result)
+
+        } catch (err: any) {
+            
+        }
     }
 
     async getAllTopics(req: Request, res: Response) {
@@ -35,7 +44,7 @@ export class TopicController {
     async vote(req: Request, res: Response) {
 
     }
-    
+
     async deleteTopic(req: Request, res: Response) {
 
     }
