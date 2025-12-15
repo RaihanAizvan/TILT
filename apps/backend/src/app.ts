@@ -4,6 +4,7 @@ import cors from "cors"
 
 import { TopicService } from "./application/services/topic.service.js";
 import { InMemoryTopicRepository } from "./infrastructure/repositories/in-memory-topic.repository.js";
+import { MongoTopicRepository } from "./infrastructure/repositories/mongo-topic.repository.js";
 import { TopicController } from "./presentation/controllers/topic.controller.js";
 
 const app = express();
@@ -29,7 +30,7 @@ app.use(
 
 
 // wiring
-const topicRepository = new InMemoryTopicRepository();
+const topicRepository = new MongoTopicRepository();
 const topicService = new TopicService(topicRepository);
 const topicController = new TopicController(topicService);
 
@@ -47,6 +48,5 @@ app.post("/topics", (req, res) => topicController.createTopic(req, res));
 app.get("/topics", (req, res) => topicController.getAllTopics(req, res));
 app.post("/topics/:id/vote", (req, res) => topicController.vote(req, res));
 app.delete("/topics/:id", (req, res) => topicController.deleteTopic(req, res));
-app.post('/session/username', (req, res) => topicController.createUser(req,res))
 
 export default app;

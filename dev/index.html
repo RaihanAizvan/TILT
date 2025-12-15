@@ -1,151 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>TILT – Dev UI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>TILT – Dev UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
 
-<body class="bg-gray-100 min-h-screen">
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <div class="bg-white shadow px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-semibold">TILT – Dev UI</h1>
 
-  <!-- Header -->
-  <div class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-semibold">TILT – Dev UI</h1>
-
-    <div id="userBox" class="flex items-center gap-2">
-      <span id="usernameLabel" class="text-sm text-gray-600 hidden"></span>
-      <input
-        id="usernameInput"
-        placeholder="Enter username"
-        class="border px-2 py-1 text-sm rounded"
-      />
-      <button
-        onclick="setUsername()"
-        class="bg-black text-white px-3 py-1 text-sm rounded"
-      >
-        Set
-      </button>
-    </div>
-  </div>
-
-  <!-- Main -->
-  <div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded shadow">
-
-    <!-- Create topic -->
-    <div class="flex gap-2 mb-4">
-      <input
-        id="topicInput"
-        placeholder="Enter topic"
-        class="flex-1 border px-3 py-2 rounded"
-      />
-      <button
-        onclick="createTopic()"
-        class="bg-blue-600 text-white px-4 rounded"
-      >
-        Create
-      </button>
+      <div class="flex items-center gap-2">
+        <span id="usernameLabel" class="text-sm text-gray-600"></span>
+        <button
+          onclick="resetUser()"
+          class="text-xs text-red-500 underline"
+        >
+          change
+        </button>
+      </div>
     </div>
 
-    <button
-      onclick="loadTopics()"
-      class="text-sm text-blue-600 mb-4"
-    >
-      Load topics
-    </button>
+    <!-- Main -->
+    <div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded shadow">
+      <!-- Create topic -->
+      <div class="flex gap-2 mb-4">
+        <input
+          id="topicInput"
+          placeholder="Enter topic"
+          class="flex-1 border px-3 py-2 rounded"
+        />
+        <button
+          onclick="createTopic()"
+          class="bg-blue-600 text-white px-4 rounded"
+        >
+          Create
+        </button>
+      </div>
 
-    <ul id="topics" class="space-y-3"></ul>
-  </div>
+      <button onclick="loadTopics()" class="text-sm text-blue-600 mb-4">
+        Load topics
+      </button>
 
-  <script>
-    const API = "http://localhost:3000"
+      <ul id="topics" class="space-y-3"></ul>
+    </div>
 
-    async function setUsername() {
-      const username = document.getElementById("usernameInput").value
-      if (!username) return alert("Enter username")
+    <script>
+      const API = "http://localhost:3000";
 
-      await fetch(`${API}/session/username`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username })
-      })
+      // ---------- identity ----------
+      function ensureUser() {
+        let userId = localStorage.getItem("userId");
+        let username = localStorage.getItem("username");
 
-      document.getElementById("usernameLabel").textContent = username
-      document.getElementById("usernameLabel").classList.remove("hidden")
-      document.getElementById("usernameInput").classList.add("hidden")
-    }
+        if (!userId || !username) {
+          username = prompt("Enter your username");
+          if (!username) throw new Error("Username required");
 
-    async function createTopic() {
-      const topic = document.getElementById("topicInput").value
-      if (!topic) return
+          userId = crypto.randomUUID();
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("username", username);
+        }
 
-      await fetch(`${API}/topics`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ topic })
-      })
+        document.getElementById("usernameLabel").textContent = username;
+        return { userId, username };
+      }
 
-      document.getElementById("topicInput").value = ""
-      loadTopics()
-    }
+      function resetUser() {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        location.reload();
+      }
 
-    async function loadTopics() {
-      const res = await fetch(`${API}/topics`, {
-        credentials: "include"
-      })
-      const data = await res.json()
+      ensureUser();
 
-      const list = document.getElementById("topics")
-      list.innerHTML = ""
+      // ---------- API calls ----------
+      async function createTopic() {
+        const topic = document.getElementById("topicInput").value.trim();
+        if (!topic) return;
 
-      data.forEach(t => {
-        const li = document.createElement("li")
-        li.className = "border rounded p-3 flex justify-between items-center"
+        const { userId, username } = ensureUser();
 
-        li.innerHTML = `
-<div class=" items-center space-x-2">
-    <p class="font-medium">${t.topic}</p>
-    <p class="text-xs text-gray-500">by ${t.createdByName}</p>
-    <p class="text-sm mt-1 flex items-center space-x-1">
-        <svg width="10%" height="10%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17 18L12 13L7 18M17 11L12 6L7 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        ${t.upCount}
-        <svg width="10%" height="10%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 13L12 18L17 13M7 6L12 11L17 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        ${t.downCount}
-    </p>
-</div>
+        await fetch(`${API}/topics`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": userId,
+            "x-username": username
+          },
+          body: JSON.stringify({ topic })
+        });
 
-          <div class="flex gap-2">
-            <button onclick="vote(${t.id}, 'up')" class="text-sm px-2 py-1 bg-green-100 rounded">Up</button>
-            <button onclick="vote(${t.id}, 'down')" class="text-sm px-2 py-1 bg-red-100 rounded">Down</button>
-            <button onclick="del(${t.id})" class="text-sm px-2 py-1 bg-gray-200 rounded">Delete</button>
-          </div>
-        `
-        list.appendChild(li)
-      })
-    }
+        document.getElementById("topicInput").value = "";
+        loadTopics();
+      }
 
-    async function vote(id, value) {
-      await fetch(`${API}/topics/${id}/vote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ value })
-      })
-      loadTopics()
-    }
+      async function loadTopics() {
+        const res = await fetch(`${API}/topics`);
+        const data = await res.json();
 
-    async function del(id) {
-      await fetch(`${API}/topics/${id}`, {
-        method: "DELETE",
-        credentials: "include"
-      })
-      loadTopics()
-    }
-  </script>
-</body>
+        const list = document.getElementById("topics");
+        list.innerHTML = "";
+
+        data.forEach(t => {
+          const li = document.createElement("li");
+          li.className = "border rounded p-3 flex justify-between items-center";
+
+          li.innerHTML = `
+            <div>
+              <p class="font-medium">${t.topic}</p>
+              <p class="text-xs text-gray-500">by ${t.createdByName}</p>
+              <p class="text-sm mt-1">
+                👍 ${t.upCount} &nbsp; 👎 ${t.downCount}
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <button onclick="vote('${t.id}', 'up')" class="text-sm px-2 py-1 bg-green-100 rounded">Up</button>
+              <button onclick="vote('${t.id}', 'down')" class="text-sm px-2 py-1 bg-red-100 rounded">Down</button>
+              <button onclick="del('${t.id}')" class="text-sm px-2 py-1 bg-gray-200 rounded">Delete</button>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      }
+
+      async function vote(id, value) {
+        const { userId, username } = ensureUser();
+
+        await fetch(`${API}/topics/${id}/vote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": userId,
+            "x-username": username
+          },
+          body: JSON.stringify({ value })
+        });
+
+        loadTopics();
+      }
+
+      async function del(id) {
+        const { userId, username } = ensureUser();
+
+        await fetch(`${API}/topics/${id}`, {
+          method: "DELETE",
+          headers: {
+            "x-user-id": userId,
+            "x-username": username
+          }
+        });
+
+        loadTopics();
+      }
+    </script>
+  </body>
 </html>

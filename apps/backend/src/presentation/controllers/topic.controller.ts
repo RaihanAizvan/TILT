@@ -27,19 +27,16 @@ export class TopicController {
 
     async createTopic(req: Request, res: Response) {
         try {
-            const {topic} = req.body;
-            const {userId, username} = req.session;
-            if(!username){
-                return res.status(400).json({message: "Set username first. then create post"})
+            const { topic } = req.body;
+            const userId = req.header("x-user-id");
+            const username = req.header("x-username");
+            if (!userId || !username) {
+                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
             }
-            if(!userId){
-                return res.status(401).json({message: "Unauthorized"})
-            }
-            const result = await this.topicService.createTopic({topic}, userId, username)
-            res.json(result)
-
+            const result = await this.topicService.createTopic({ topic }, userId, username);
+            res.json(result);
         } catch (err: any) {
-            res.status(500).json({message:err.message}) 
+            res.status(500).json({ message: err.message });
         }
     }
 
@@ -56,65 +53,40 @@ export class TopicController {
 
     async vote(req: Request, res: Response) {
         try {
-            const topicId: number  = Number(req.params.id)
-            
-            //checking for not a number
-            if (Number.isNaN(topicId)) {
-                throw new Error("Topic id must be a number")
-            }
-            const { value }: VoteTopicDTO = req.body
-            const userId = req.session.userId;
-
-            if(!userId) {
-                return res.status(401).json({message: "Unauthorized"})
+            const topicId: string = req.params.id;
+            const { value }: VoteTopicDTO = req.body;
+            const userId = req.header("x-user-id");
+            const username = req.header("x-username");
+            if (!userId || !username) {
+                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
             }
 
             const dto: VoteTopicDTO = {
-                topicId : topicId,
-                value: value
-            }
+                topicId: topicId,
+                value: value,
+            };
 
-            await this.topicService.vote(dto, userId)
-            res.status(204).send()
-
+            await this.topicService.vote(dto, userId);
+            res.status(204).send();
         } catch (err: any) {
-            res.status(400).json({message: err.message})
+            res.status(400).json({ message: err.message });
         }
     }
 
     async deleteTopic(req: Request, res: Response) {
         try {
-            
-            const topicId: number = Number(req.params.id)
-
-            if (Number.isNaN(topicId)) {
-                return res.status(400).json({ message: "Topic id must be a number" })
+            const topicId: string = req.params.id;
+            const userId = req.header("x-user-id");
+            const username = req.header("x-username");
+            if (!userId || !username) {
+                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
             }
 
-            const userId: number| undefined = req.session.userId;
-            if (!userId) {
-                return res.status(401).json({ message: "Unauthorized" })
-            }
-
-            await this.topicService.deleteTopic(topicId, userId)
-            res.status(204).send()
-
-        } catch (err:any) {
-            res.status(500).json({message: err.message})
+            await this.topicService.deleteTopic(topicId, userId);
+            res.status(204).send();
+        } catch (err: any) {
+            res.status(500).json({ message: err.message });
         }
     }
 
-    async createUser(req: Request, res: Response) {
-        try {
-            const username = req.body.username
-            if(!username) {
-                return res.status(400).json({message: "Set username first. create post"})
-            }
-
-            req.session.username = username
-            res.status(204).send()
-        } catch(err:any) {
-            res.status(500).json({message: err.message})
-        }
-    }
 }

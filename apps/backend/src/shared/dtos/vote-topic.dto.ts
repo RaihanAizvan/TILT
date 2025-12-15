@@ -1,4 +1,4 @@
 export interface VoteTopicDTO {
-    topicId: number;
+    topicId: string;
     value: "up" | "down";
 }
