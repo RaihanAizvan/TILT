@@ -28,10 +28,10 @@ export class TopicController {
     async createTopic(req: Request, res: Response) {
         try {
             const { topic } = req.body;
-            const userId = req.header("x-user-id");
-            const username = req.header("x-username");
+            const userId = String(req.session.userId);
+            const username = req.session.username;
             if (!userId || !username) {
-                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
+                return res.status(400).json({ message: "Missing username" });
             }
             const result = await this.topicService.createTopic({ topic }, userId, username);
             res.json(result);
@@ -42,12 +42,12 @@ export class TopicController {
 
     async getAllTopics(req: Request, res: Response) {
         try {
-            
+
             const topics = await this.topicService.getAllTopics()
             res.json(topics)
 
         } catch (err: any) {
-            res.status(500).json({message:err.message})
+            res.status(500).json({ message: err.message })
         }
     }
 
@@ -55,10 +55,10 @@ export class TopicController {
         try {
             const topicId: string = req.params.id;
             const { value }: VoteTopicDTO = req.body;
-            const userId = req.header("x-user-id");
-            const username = req.header("x-username");
+            const userId = String(req.session.userId);
+            const username = req.session.username;
             if (!userId || !username) {
-                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
+                return res.status(400).json({ message: "Missing username" });
             }
 
             const dto: VoteTopicDTO = {
@@ -76,10 +76,10 @@ export class TopicController {
     async deleteTopic(req: Request, res: Response) {
         try {
             const topicId: string = req.params.id;
-            const userId = req.header("x-user-id");
-            const username = req.header("x-username");
+            const userId = String(req.session.userId);
+            const username = req.session.username;
             if (!userId || !username) {
-                return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
+                return res.status(400).json({ message: "Missing username" });
             }
 
             await this.topicService.deleteTopic(topicId, userId);
