@@ -42,8 +42,8 @@ export class TopicController {
 
     async getAllTopics(req: Request, res: Response) {
         try {
-
-            const topics = await this.topicService.getAllTopics()
+            const userId: string | undefined = String(req.session.userId);
+            const topics = await this.topicService.getAllTopics(userId)
             res.json(topics)
 
         } catch (err: any) {
