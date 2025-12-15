@@ -35,7 +35,7 @@ export class TopicService {
             createdBy: newTopic.created_by,
             createdByName: newTopic.created_by_name,
             createdAt: newTopic.createdAt,
-            isOwner: true,
+            isOwner: true
         }
     }
 

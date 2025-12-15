@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { vote, deleteTopic } from "../api/client"
+import { computed } from "vue"
 
 // Note: Ensure your API 'topic' object returns a field like 'userVote'
 // that is 'up', 'down', or null, so the UI can highlight it.
@@ -7,14 +8,17 @@ const props = defineProps<{ topic: any }>()
 const emit = defineEmits<{ (e: "updated"): void }>()
 
 const up = async () => {
+  if (props.topic.userVote === "up") return
   await vote(props.topic.id, "up")
   emit("updated")
 }
 
 const down = async () => {
+  if (props.topic.userVote === "down") return
   await vote(props.topic.id, "down")
   emit("updated")
 }
+
 
 const del = async () => {
   if (!confirm("Delete this post?")) return
@@ -22,10 +26,8 @@ const del = async () => {
   emit("updated")
 }
 
-// Helper to determine vote color state
-// Assuming topic.userVote exists. If not, this logic gracefully degrades.
-const isUpvoted = () => props.topic.userVote === 'up'
-const isDownvoted = () => props.topic.userVote === 'down'
+const isUpvoted = computed(() => props.topic.userVote === "up")
+const isDownvoted = computed(() => props.topic.userVote === "down")
 
 </script>
 
@@ -44,7 +46,7 @@ const isDownvoted = () => props.topic.userVote === 'down'
 
 
 
-      <div class="vote-pill" :class="{ 'voted-up': isUpvoted(), 'voted-down': isDownvoted() }">
+      <div class="vote-pill" :class="{ 'voted-up': isUpvoted, 'voted-down': isDownvoted }">
         <button class="vote-btn up" @click="up">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 4L4 12h5v8h6v-8h5z" />
