@@ -39,8 +39,8 @@ app.use((req, res, next) => {
 
 
 // routes
-app.post("/topics", (req, res) => topicController.createTopic(req, res));
-app.get("/topics", (req, res) => topicController.getAllTopics(req, res));
-app.post("/topics/:id/vote", (req, res) => topicController.vote(req, res));
-app.delete("/topics/:id", (req, res) => topicController.deleteTopic(req, res));
+app.post("/api/topics", (req, res) => topicController.createTopic(req, res));
+app.get("/api/topics", (req, res) => topicController.getAllTopics(req, res));
+app.post("/api/topics/:id/vote", (req, res) => topicController.vote(req, res));
+app.delete("/api/topics/:id", (req, res) => topicController.deleteTopic(req, res));
 export default app;
