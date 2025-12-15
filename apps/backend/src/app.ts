@@ -1,5 +1,4 @@
-import express from "express";
-import session from "express-session"
+import express, { Request, Response } from "express";
 import cors from "cors"
 
 import { TopicService } from "./application/services/topic.service.js";
@@ -16,15 +15,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: true, // or http://localhost:5500
-    credentials: true,
-  })
-)
-
-app.use(
-  session({
-    secret: "tilt-secret",
-    resave: false,
-    saveUninitialized: true,
+    credentials: false, // stateless; no cookies/credentials
   })
 )
 
@@ -34,12 +25,16 @@ const topicRepository = new MongoTopicRepository();
 const topicService = new TopicService(topicRepository);
 const topicController = new TopicController(topicService);
 
-// add user id randomly
-app.use((req, _res, next) => {
-  if (!req.session.userId) {
-    req.session.userId = Math.floor(Math.random() * 1000000)
+// identity via headers middleware (stateless)
+app.use((req, res, next) => {
+  const userId = req.header("x-user-id");
+  const username = req.header("x-username");
+  // For non-protected routes like GET /topics we allow missing headers
+  const isProtected = req.method !== 'GET' || req.path.startsWith('/session');
+  if (isProtected && (!userId || !username)) {
+    return res.status(400).json({ message: "Missing identity headers: x-user-id, x-username" });
   }
-  next()
+  next();
 })
 
 
@@ -48,5 +43,4 @@ app.post("/topics", (req, res) => topicController.createTopic(req, res));
 app.get("/topics", (req, res) => topicController.getAllTopics(req, res));
 app.post("/topics/:id/vote", (req, res) => topicController.vote(req, res));
 app.delete("/topics/:id", (req, res) => topicController.deleteTopic(req, res));
-
 export default app;

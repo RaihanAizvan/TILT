@@ -1,7 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import app from "./app.js";
 import { connectMongo } from "./infrastructure/database/mongo.js";
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT: number = Number(process.env.PORT || 3000);
 
 async function startServer(): Promise<void> {
   try {
