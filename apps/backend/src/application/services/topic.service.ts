@@ -34,11 +34,12 @@ export class TopicService {
             downCount: 0,
             createdBy: newTopic.created_by,
             createdByName: newTopic.created_by_name,
-            createdAt: newTopic.createdAt
+            createdAt: newTopic.createdAt,
+            isOwner: true
         }
     }
 
-    async getAllTopics(): Promise<TopicResponseDTO[]> {
+    async getAllTopics(userId: string | undefined): Promise<TopicResponseDTO[]> {
 
         // get all topics
         const topics: Topic[] = await this.topicRepository.findAll();
@@ -54,6 +55,7 @@ export class TopicService {
                 else
                     down++
             }
+            
             let dto2: TopicResponseDTO = {
                 id:topics[i].id,
                 topic:topics[i].topic,
@@ -62,6 +64,7 @@ export class TopicService {
                 createdBy: topics[i].created_by,
                 createdByName: topics[i].created_by_name,
                 createdAt: topics[i].createdAt,
+                isOwner: topics[i].created_by === userId
             }
             res.push(dto2)
         }

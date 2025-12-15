@@ -6,4 +6,5 @@ export interface TopicResponseDTO {
   createdBy: string;
   createdByName: string;
   createdAt: Date;
+  isOwner: boolean;
 }

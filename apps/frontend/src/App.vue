@@ -2,44 +2,61 @@
 import { ref, onMounted } from "vue"
 import { getTopics, getMe } from "./api/client"
 
-import UsernamePrompt from "./components/UsernamePrompt.vue"
+import TopBar from "./components/TopBar.vue"
 import TopicCreate from "./components/TopicCreate.vue"
 import TopicList from "./components/TopicList.vue"
 
 const topics = ref<any[]>([])
-const hasUsername = ref(false)
-const loading = ref(true)
+const username = ref<string | null>(null)
 
 const load = async () => {
-  loading.value = true
   try {
-    await getMe()              // 🔑 single source of truth
-    hasUsername.value = true
-    topics.value = await getTopics()
+    const me = await getMe()
+    username.value = me.username
   } catch {
-    hasUsername.value = false
-  } finally {
-    loading.value = false
+    username.value = null
   }
+  topics.value = await getTopics()
 }
 
 onMounted(load)
 </script>
 
 <template>
-  <main class="container">
-    <h1>TILT</h1>
-
-    <p v-if="loading">Loading…</p>
-
-    <UsernamePrompt
-      v-else-if="!hasUsername"
-      @saved="load"
-    />
-
-    <template v-else>
+  <div class="app-container">
+    <TopBar :username="username" @updated="load" />
+    <main class="feed">
       <TopicCreate @created="load" />
       <TopicList :topics="topics" @refresh="load" />
-    </template>
-  </main>
+    </main>
+  </div>
 </template>
+
+<style>
+/* Global Resets & Variables */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #212121; /* chatgpt-ish Gray */
+  color: #1a1a1b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+.feed {
+  max-width: 640px;
+  margin: 20px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+</style>
