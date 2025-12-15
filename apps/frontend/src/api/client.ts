@@ -36,3 +36,10 @@ export const vote = (id: number, value: "up" | "down") =>
 
 export const deleteTopic = (id: number) =>
     baseFetch(`${API}/topics/${id}`, { method: "DELETE" })
+
+export const getMe = async () => {
+    const res = await baseFetch(`${API}/session/me`)
+    if (!res.ok) throw new Error("No username")
+    return res.json()
+}
+
