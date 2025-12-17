@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import type { TopicRepository } from "../../infrastructure/repositories/topic.repository.js";
 import type { CreateTopicDTO } from "../../shared/dtos/create-topic.dto.js";
 import type { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto.js";
