@@ -4,7 +4,7 @@ import type { Vote } from "../../domain/models/vote.js";
 import type { Topic } from "../../domain/models/topic.js";
 
 export interface TopicRepository {
-    create(topic: string) : Promise<Topic>
+    create(topic: Topic) : Promise<Topic>
     findAll(): Promise<Topic[]>
     deleteById(topicId: string): Promise<void> 
 
