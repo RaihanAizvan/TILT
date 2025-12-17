@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /*
 Endpoints to implement:
 
