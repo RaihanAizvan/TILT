@@ -1,13 +1,13 @@
 // repository means just how data is stored and fetched
 
-import { Vote } from "../../domain/models/vote";
-import { Topic } from "../../domain/models/topic";
+import type { Vote } from "../../domain/models/vote.js";
+import type { Topic } from "../../domain/models/topic.js";
 
 export interface TopicRepository {
     create(topic: string) : Promise<Topic>
     findAll(): Promise<Topic[]>
-    deleteById(topicId: number): Promise<void> 
+    deleteById(topicId: string): Promise<void> 
 
     saveVote(vote:Vote) : Promise<void>
-    findVotesByTopicId(topicId: number): Promise<Vote[]>
+    findVotesByTopicId(topicId: string): Promise<Vote[]>
 }

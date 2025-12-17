@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import type { TopicRepository } from "../../infrastructure/repositories/topic.repository.js";
 import type { CreateTopicDTO } from "../../shared/dtos/create-topic.dto.js";
 import type { VoteTopicDTO } from "../../shared/dtos/vote-topic.dto.js";
@@ -13,17 +11,16 @@ export class TopicService {
 
     }
 
-        async createTopic(dto: CreateTopicDTO, userId: string, username: string): Promise<TopicResponseDTO> {
+    async createTopic(dto: CreateTopicDTO, userId: number) : Promise<TopicResponseDTO> {
 
-            // create a new topic
+        // create a new topic
 
-            const topic: Topic  = {
-                id:'',
-                topic: dto.topic,
-                created_by: userId,
-                created_by_name: username,
-                createdAt: new Date()
-            }
+        const topic: Topic  = {
+            id:0,
+            topic: dto.topic,
+            created_by: userId,
+            createdAt: new Date()
+        }
         // store it
 
         const newTopic = await this.topicRepository.create(topic)
@@ -35,13 +32,11 @@ export class TopicService {
             upCount: 0,
             downCount: 0,
             createdBy: newTopic.created_by,
-            createdByName: newTopic.created_by_name,
-            createdAt: newTopic.createdAt,
-            isOwner: true
+            createdAt: newTopic.createdAt
         }
     }
 
-    async getAllTopics(userId: string | undefined): Promise<TopicResponseDTO[]> {
+    async getAllTopics(): Promise<TopicResponseDTO[]> {
 
         // get all topics
         const topics: Topic[] = await this.topicRepository.findAll();
@@ -57,16 +52,13 @@ export class TopicService {
                 else
                     down++
             }
-            
             let dto2: TopicResponseDTO = {
                 id:topics[i].id,
                 topic:topics[i].topic,
                 upCount: up,
                 downCount: down,
                 createdBy: topics[i].created_by,
-                createdByName: topics[i].created_by_name,
                 createdAt: topics[i].createdAt,
-                isOwner: topics[i].created_by === userId
             }
             res.push(dto2)
         }
@@ -74,29 +66,28 @@ export class TopicService {
         return res
     }
     
-    async vote(dto: VoteTopicDTO, userId: string): Promise<void> {
+    async vote(dto: VoteTopicDTO, userId: number): Promise<void> {
         const vote: Vote = {
-            id: 0,
-            topicId: dto.topicId,
+            id:0,
+            topicId:dto.topicId,
             userId: userId,
-            value: dto.value,
-        };
-        await this.topicRepository.saveVote(vote);
+            value: dto.value
+        }
+        await this.topicRepository.saveVote(vote)
     }
 
-    async deleteTopic(topicId: string, userId: string): Promise<void> {
+    async deleteTopic(topicId: number, userId: number) : Promise<void> {
         const topics: Topic[] = await this.topicRepository.findAll();
-        const topic = topics.find((t) => t.id === topicId);
-
+        const topic = topics.find(t=> t.id === topicId);
+        console.log(topicId)
         if (!topic) {
-            throw new Error("Topic not found");
+            throw new Error("Topic not found")
         }
 
-        if (topic.created_by !== userId) {
-            throw new Error("Not premited");
+        if(topic.created_by !== userId) {
+            throw new Error("Not premited")
         }
-        await this.topicRepository.deleteById(topicId);
+        await this.topicRepository.deleteById(topicId)
     }
 
 }
->>>>>>> dev

@@ -1,6 +1,6 @@
 export interface Vote {
-    id: number,
-    topicId:number,
-    userId: number,
-    value: "up" | "down"
+  id: number;
+  topicId: string;
+  userId: string;
+  value: "up" | "down";
 }

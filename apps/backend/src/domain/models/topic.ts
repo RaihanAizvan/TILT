@@ -1,6 +1,7 @@
 export interface Topic {
-    id: number,
-    topic: string,
-    created_by: number,
-    createdAt: Date,
+  id: string;
+  topic: string;
+  created_by: string;
+  created_by_name: string;
+  createdAt: Date;
 }
